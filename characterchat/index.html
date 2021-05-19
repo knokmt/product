@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Chatアプリ</title>
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+ <div>
+     <table>
+        <tr>
+            <tr>
+                <th>ディルック</th>
+                <th>刻晴</th>
+                <th>鍾離</th>
+                <th>七七</th>
+                <th>ウェンティ</th>
+            </tr>
+        </tr>
+         <tr>
+            <th class="imgs" data-img="0"><img src="imgs/d.jpg" width="100"></th>
+            <th class="imgs" data-img="1"><img src="imgs/k.jpg" width="100"></th>
+            <th class="imgs" data-img="2"><img src="imgs/s.png" width="100"></th>
+            <th class="imgs" data-img="3"><img src="imgs/n.jpg" width="100"></th>
+            <th class="imgs" data-img="4"><img src="imgs/u.jpg" width="100"></th>
+         </tr>
+    </table >  
+    <table id="ictable">
+        <tbody>
+         <tr>
+            <td>&#x1f600;</td>
+            <td>&#x1f923;</td>
+            <td>&#x1f970;</td>
+            <td>&#x1f607;</td>
+            <td>&#x1f60b;</td>
+            <td>&#x1f914;</td>
+            <td>&#x1f92d;</td>
+            <td>&#x1f97a;</td>
+            <td>&#x1f62d;</td>
+            <td>&#x1f631;</td>
+            <td>&#x1f621;</td>
+            <td>&#x1f495;</td>
+            <td>&#x1f44b;&#x1f3fb;</td>
+            <td>&#x1f44c;&#x1f3fb;</td>
+            <td>&#x1f44d;&#x1f3fb;</td>
+            <td>&#x270a;&#x1f3fb;</td>
+            <td>&#x270c;&#x1f3fb;</td>
+            <td>&#x1f590;&#x1f3fb;</td>
+         </tr>
+        </tbody>
+    </table>
+     
+     <div>名前 : <input type="text" id="uname"> </div>
+     <div>
+         <textarea id="text1" cols="30" rows="5"></textarea>
+         <button id="send">送信</button>
+     </div>
+     <div id="output", style="background-color: #ffffdd;"></div>
+ </div>
+
+
+
+
+
+
+
+<!--/ コンテンツ表示画面 -->
+
+
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+
+
+<!--** 以下Firebase **-->
+Firebaseのkeyの部分は削除しています
+<script>
+  const ref = firebase.database().ref();
+
+  //アイコン処理
+  let d=0;
+  const cname=["ディルック","刻晴","鍾離","七七","ウェンティ"];
+  const tcolor=["red","purple","orange","#75CBE5","green"];
+  const img = ["d.jpg","k.jpg","s.png","n.jpg","u.jpg"];
+  $(".imgs").on("click",function(){
+      d = $(this).attr("data-img");
+      $("#uname").val(cname[d]);
+    });
+
+
+  $('#ictable').on('click','td',function(){
+      $("#text1").val($("#text1").val()+$(this).text());
+      });
+
+
+  //送信
+  $("#send").on("click",function(){
+      　//日時取得
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;  
+        var date = now.getDate();
+        var day = now.getDay();  
+        var h = now.getHours();
+        var m = now.getMinutes();
+        var s = now.getSeconds();
+
+        var t=0;
+        if(h>=0 && h<=12){
+            t=1;
+        }else if(h>=13 && h<=17){
+            t=2;
+        }else if(h>=18 && h<=23){
+            t=3;
+        }
+
+      const uname = $("#uname").val();
+      const text = $("#text1").val();
+      const datetime = month+'月'+date+'日'+h+':'+m+':'+s;
+      const msg ={
+          mtime: datetime,
+          uname: uname,
+          text: text,
+          icon:d,
+          
+      };
+      ref.push(msg);
+  });
+
+  
+  //"child_added:毎回1個", "value:毎回全てのデータを取得"
+  ref.on("child_added",function(data){
+      const v = data.val();
+      const k = data.key;
+      console.log(v);
+      const h = '<dl id="'+k+'"><img src="imgs/'+img[v.icon]+'" width="50"><font size="３" color='+tcolor[v.icon]+'><b>'+v.uname+'     </b></font><font size="1">'+v.mtime+'</font></dt><dd>'+v.text
+                +'</dd></dl>';
+      $("#output").prepend(h); 
+  });
+      
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
